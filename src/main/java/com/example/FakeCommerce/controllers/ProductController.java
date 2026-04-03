@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.FakeCommerce.dtos.CreateProductRequestDto;
 import com.example.FakeCommerce.dtos.GetProductResponseDto;
+import com.example.FakeCommerce.dtos.GetProductWithDetailsResponseDto;
 import com.example.FakeCommerce.schema.Product;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +41,11 @@ public class ProductController {
     @PostMapping
     public Product createProduct(@RequestBody CreateProductRequestDto requestDto){
         return productService.createProduct(requestDto);
+    }
+    @PostMapping("/{id}")
+    public GetProductResponseDto getProductById (@PathVariable Long id){
+        return productService.getProductById(id);
+
     }
     
     @DeleteMapping("/{id}")
@@ -67,6 +73,10 @@ public class ProductController {
     public List<String> getAllUniqueCategories(){
         return productService.getUniqueCategories();       
     }
-
-    
+     
+    // Adder after git commit 3 and to check with postman
+     @GetMapping("/{id}/details")
+     public GetProductWithDetailsResponseDto getProductWithDetails(@PathVariable Long id){
+        return productService.getProductWithDetailsById(id);
+     }
 }

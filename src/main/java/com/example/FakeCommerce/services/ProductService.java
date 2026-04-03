@@ -6,6 +6,7 @@ import com.example.FakeCommerce.schema.Category;
 import com.example.FakeCommerce.schema.Product;
 import com.example.FakeCommerce.dtos.CreateProductRequestDto;
 import com.example.FakeCommerce.dtos.GetProductResponseDto;
+import com.example.FakeCommerce.dtos.GetProductWithDetailsResponseDto;
 import com.example.FakeCommerce.repositories.ProductRepository; 
 
 import javax.management.RuntimeErrorException;
@@ -51,11 +52,18 @@ public class ProductService {
         //                                 .image(product.getImage())
         //                                 .rating(product.getRating())
         //                                 .build()).toList();
-        
+
     }
 
-    public Product getProductById(Long id){
-        return productRepository.findById(id).orElseThrow(() -> new RuntimeException( "Product not found"));
+    public GetProductResponseDto getProductById(Long id){
+        return productRepository.findById(id).map(product -> GetProductResponseDto.builder()
+                                        .id(product.getId())
+                                        .title(product.getTitle())
+                                        .description(product.getDescription())
+                                        .price(product.getPrice())
+                                        .image(product.getImage())
+                                        .rating(product.getRating())
+                                        .build()).orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
     }
 
     public Product createProduct(CreateProductRequestDto requestDto){
@@ -95,5 +103,19 @@ public class ProductService {
 
     public List<String> getUniqueCategories(){
         return productRepository.findAllCategories();
+    }
+
+    public GetProductWithDetailsResponseDto getProductWithDetailsById(Long id){
+        Product product = productRepository.findProductWithDetailsById(id).get(0);
+
+        return GetProductWithDetailsResponseDto.builder()
+                                        .id(product.getId())
+                                        .title(product.getTitle())
+                                        .description(product.getDescription())
+                                        .price(product.getPrice())
+                                        .image(product.getImage())
+                                        .rating(product.getRating())
+                                        .category(product.getCategory().getName())
+                                        .build();   
     }
 }
