@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,13 +23,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "products")
 
-public class Product {
-    @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
-
-    private Long id; //Primary key
+public class Product extends BaseEntity {
+  
     
-    @Column(nullable = false)
+    @Column(nullable = false)  
     private String title;
     
     @Column(columnDefinition = "TEXT") // to store large text
@@ -37,8 +36,9 @@ public class Product {
     private BigDecimal price;
 
     private String image;
-
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     private String rating;
 

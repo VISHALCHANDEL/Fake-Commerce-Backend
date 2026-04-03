@@ -1,5 +1,7 @@
 package com.example.FakeCommerce.services;
 import java.util.List;
+
+import com.example.FakeCommerce.schema.Category;
 import com.example.FakeCommerce.schema.Product;
 import com.example.FakeCommerce.dtos.CreateProductRequestDto;
 import com.example.FakeCommerce.repositories.ProductRepository; 
@@ -14,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 
 public class ProductService {
-    
+    private final CategoryService categoryService;
     private final ProductRepository productRepository;
 
     public List<Product> getAllProducts(){
@@ -27,11 +29,12 @@ public class ProductService {
     }
 
     public Product createProduct(CreateProductRequestDto requestDto){
+        Category category = categoryService.getCategoryById(requestDto.getCategoryId());
         Product newProduct = Product.builder().title(requestDto.getTitle())
                                     .description(requestDto.getDescription())
                                     .price(requestDto.getPrice())
                                     .image(requestDto.getImage())
-                                    .category(requestDto.getCategory())
+                                    .category(category)
                                     .rating(requestDto.getRating())
                                     .build();   
         return productRepository.save(newProduct);

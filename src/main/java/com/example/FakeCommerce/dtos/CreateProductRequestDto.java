@@ -25,7 +25,7 @@ public class CreateProductRequestDto {
 
     private String image;
 
-    private String category;
+    private Long categoryId;
 
     private String rating;
 }
