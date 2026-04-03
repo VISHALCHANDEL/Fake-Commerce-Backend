@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.FakeCommerce.dtos.CreateProductRequestDto;
+import com.example.FakeCommerce.dtos.GetProductResponseDto;
 import com.example.FakeCommerce.schema.Product;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +34,7 @@ public class ProductController {
    //
 
     @GetMapping
-    public List<Product> getAllProducts(){
+    public List<GetProductResponseDto> getAllProducts(){
         return productService.getAllProducts();
     }
     @PostMapping
@@ -66,4 +67,6 @@ public class ProductController {
     public List<String> getAllUniqueCategories(){
         return productService.getUniqueCategories();       
     }
+
+    
 }
