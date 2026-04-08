@@ -22,12 +22,12 @@ public class Order extends BaseEntity{
 
     private OrderStatus status;
 
-    @ManyToMany
-    @JoinTable( // Problem with this is that it will create the table but i cannot add other attributes into that table
-        name = "order_products",
-        joinColumns = @JoinColumn(name = "order_id"),// the Fk belonging to the same schema --Order
-        inverseJoinColumns = @JoinColumn(name = "product_id")// the Fk belonging to the other scheme --Product
+    // @ManyToMany
+    // @JoinTable( // Problem with this is that it will create the table but i cannot add other attributes into that table
+    //     name = "order_products",
+    //     joinColumns = @JoinColumn(name = "order_id"),// the Fk belonging to the same schema --Order
+    //     inverseJoinColumns = @JoinColumn(name = "product_id")// the Fk belonging to the other scheme --Product
 
-    )
-    private List<Product>products;
+    // )
+   // private List<Product>products;
 }
