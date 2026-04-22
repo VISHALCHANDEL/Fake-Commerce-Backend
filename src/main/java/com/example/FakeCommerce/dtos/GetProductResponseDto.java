@@ -18,5 +18,5 @@ public class GetProductResponseDto {
     private String description;
     private BigDecimal price;
     private String image;
-    private String rating;
+    private BigDecimal rating;
 }

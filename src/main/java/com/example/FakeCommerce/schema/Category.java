@@ -1,5 +1,7 @@
 package com.example.FakeCommerce.schema;
 
+import jakarta.persistence.Column;
+
 //import org.hibernate.annotations.DialectOverride.SQLDelete;
 
 import jakarta.persistence.Entity;
@@ -19,7 +21,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE categories SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class Category extends BaseEntity {
-    
+    @Column(nullable = false)
     private String name;
     
 }

@@ -44,6 +44,8 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    private String rating;
+
+    @Column(nullable = false)
+    private BigDecimal rating;
 
 }
