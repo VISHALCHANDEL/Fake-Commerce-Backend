@@ -16,6 +16,7 @@ import com.example.FakeCommerce.dtos.CreateCategoryRequestDto;
 import com.example.FakeCommerce.schema.Category;
 import com.example.FakeCommerce.services.CategoryService;
 import com.example.FakeCommerce.utils.ApiResponse;
+import com.example.FakeCommerce.exceptions.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,18 +34,28 @@ public class CategoryController {
     }
 
     @GetMapping
-    public List<Category> getAllCategories(){
+    public ResponseEntity<ApiResponse<List<Category>>> getAllCategories() {
         System.out.println("Getting all categories is hit by api call");
-        return categoryService.getAllCategories();
+        List<Category> categories = categoryService.getAllCategories();
+        return ResponseEntity.ok(ApiResponse.success(categories, "Categories fetched successfully"));
     }
  
     @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable long id){
-        return categoryService.getCategoryById(id);
+    public ResponseEntity<ApiResponse<Category>> getCategoryById(@PathVariable long id) {
+        Category category = categoryService.getCategoryById(id);
+        if (category == null) {
+            throw new ResourceNotFoundException("Category not found with id: " + id);
+        }
+        return ResponseEntity.ok(ApiResponse.success(category, "Category fetched successfully"));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable long id){
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable long id) {
+        Category category = categoryService.getCategoryById(id);
+        if (category == null) {
+            throw new ResourceNotFoundException("Category not found with id: " + id);
+        }
         categoryService.deleteCategory(id);
+        return ResponseEntity.ok(ApiResponse.success(null, "Category deleted successfully"));
     }
 }
