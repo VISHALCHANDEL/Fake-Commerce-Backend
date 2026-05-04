@@ -17,6 +17,7 @@ import com.example.FakeCommerce.schema.Category;
 import com.example.FakeCommerce.services.CategoryService;
 import com.example.FakeCommerce.utils.ApiResponse;
 import com.example.FakeCommerce.exceptions.ResourceNotFoundException;
+import com.example.FakeCommerce.exceptions.NoCategoriesFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +38,9 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<List<Category>>> getAllCategories() {
         System.out.println("Getting all categories is hit by api call");
         List<Category> categories = categoryService.getAllCategories();
+        if (categories == null || categories.isEmpty()) {
+            throw new NoCategoriesFoundException("No categories found");
+        }
         return ResponseEntity.ok(ApiResponse.success(categories, "Categories fetched successfully"));
     }
  
