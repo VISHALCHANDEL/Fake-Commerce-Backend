@@ -5,6 +5,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.FakeCommerce.services.ProductService;
+import com.example.FakeCommerce.utils.ApiResponse;
+import com.example.FakeCommerce.exceptions.ResourceNotFoundException;
+import com.example.FakeCommerce.exceptions.NoProductsFoundException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,48 +40,85 @@ public class ProductController {
    //
 
     @GetMapping
-    public List<GetProductResponseDto> getAllProducts(){
-        return productService.getAllProducts();
+    public ResponseEntity<ApiResponse<List<GetProductResponseDto>>> getAllProducts() {
+        List<GetProductResponseDto> products = productService.getAllProducts();
+        if (products == null || products.isEmpty()) {
+            throw new NoProductsFoundException("No products found");
+        }
+        return ResponseEntity.ok(ApiResponse.success(products, "Products fetched successfully"));
     }
     @PostMapping
-    public Product createProduct(@RequestBody CreateProductRequestDto requestDto){
-        return productService.createProduct(requestDto);
+    public ResponseEntity<ApiResponse<Product>> createProduct(@RequestBody CreateProductRequestDto requestDto) {
+        Product product = productService.createProduct(requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(product, "Product created successfully"));
     }
     @PostMapping("/{id}")
-    public GetProductResponseDto getProductById (@PathVariable Long id){
-        return productService.getProductById(id);
-
+    public ResponseEntity<ApiResponse<GetProductResponseDto>> getProductById(@PathVariable Long id) {
+        GetProductResponseDto product = null;
+        try {
+            product = productService.getProductById(id);
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Product not found with id: " + id);
+        }
+        return ResponseEntity.ok(ApiResponse.success(product, "Product fetched successfully"));
     }
     
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id){
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
+        try {
+            productService.getProductById(id);
+        } catch (RuntimeException ex) {
+            throw new ResourceNotFoundException("Product not found with id: " + id);
+        }
         productService.deleteProduct(id);
+        return ResponseEntity.ok(ApiResponse.success(null, "Product deleted successfully"));
     }
 
     @GetMapping("/category/{category}")
-    public List<Product> getProductsByCategory(@PathVariable String category){
-        return productService.getProductsByCategory(category);
+    public ResponseEntity<ApiResponse<List<Product>>> getProductsByCategory(@PathVariable String category) {
+        List<Product> products = productService.getProductsByCategory(category);
+        if (products == null || products.isEmpty()) {
+            throw new NoProductsFoundException("No products found for category: " + category);
+        }
+        return ResponseEntity.ok(ApiResponse.success(products, "Products fetched successfully for category: " + category));
     }
      @GetMapping("/search")
-    public List<Product>
-    getProductsByCategoryTemp(@RequestParam("category")String category){
-        return productService.getProductsByCategory(category);
+    public ResponseEntity<ApiResponse<List<Product>>> getProductsByCategoryTemp(@RequestParam("category") String category) {
+        List<Product> products = productService.getProductsByCategory(category);
+        if (products == null || products.isEmpty()) {
+            throw new NoProductsFoundException("No products found for category: " + category);
+        }
+        return ResponseEntity.ok(ApiResponse.success(products, "Products fetched successfully for category: " + category));
     }
 
     // write an api to get all unique categories
     @GetMapping("/Allcategories")
-    public List<String> getUniqueCategories() {
-        return productService.getUniqueCategories();
+    public ResponseEntity<ApiResponse<List<String>>> getUniqueCategories() {
+        List<String> categories = productService.getUniqueCategories();
+        if (categories == null || categories.isEmpty()) {
+            throw new NoProductsFoundException("No unique categories found");
+        }
+        return ResponseEntity.ok(ApiResponse.success(categories, "Unique categories fetched successfully"));
     }
 
     @GetMapping("/uniqueCategories")
-    public List<String> getAllUniqueCategories(){
-        return productService.getUniqueCategories();       
+    public ResponseEntity<ApiResponse<List<String>>> getAllUniqueCategories() {
+        List<String> categories = productService.getUniqueCategories();
+        if (categories == null || categories.isEmpty()) {
+            throw new NoProductsFoundException("No unique categories found");
+        }
+        return ResponseEntity.ok(ApiResponse.success(categories, "Unique categories fetched successfully"));
     }
      
     // Adder after git commit 3 and to check with postman
      @GetMapping("/{id}/details")
-     public GetProductWithDetailsResponseDto getProductWithDetails(@PathVariable Long id){
-        return productService.getProductWithDetailsById(id);
-     }
+    public ResponseEntity<ApiResponse<GetProductWithDetailsResponseDto>> getProductWithDetails(@PathVariable Long id) {
+        GetProductWithDetailsResponseDto productDetails;
+        try {
+            productDetails = productService.getProductWithDetailsById(id);
+        } catch (Exception ex) {
+            throw new ResourceNotFoundException("Product details not found with id: " + id);
+        }
+        return ResponseEntity.ok(ApiResponse.success(productDetails, "Product details fetched successfully"));
+    }
 }

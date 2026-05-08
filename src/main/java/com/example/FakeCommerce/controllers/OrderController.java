@@ -2,19 +2,35 @@ package com.example.FakeCommerce.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.FakeCommerce.dtos.GetOrderResponseDto;
 import com.example.FakeCommerce.schema.Order;
+import com.example.FakeCommerce.services.OrderService;
+import com.example.FakeCommerce.utils.ApiResponse;
+
+import aQute.bnd.annotation.headers.RequireCapability;
+import lombok.RequiredArgsConstructor;
+
+
+@RequestMapping("/api/v1/orders")
+@RequiredArgsConstructor
 
 public class OrderController {
-    
+    private final OrderService orderService;
     @GetMapping
-    public List<Order>getAllOrders(){
-        throw new UnsupportedOperationException("Not implemented");
+    public ResponseEntity<ApiResponse<List<GetOrderResponseDto>>>getAllOrders(){
+       
+       List<GetOrderResponseDto> orders = orderService.getAllOrders();
+       return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(orders, "Orders fetched successfully"));
+       // throw new UnsupportedOperationException("Not implemented");
     }
     
     @PostMapping
@@ -23,13 +39,16 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOrder(@PathVariable Long id){
-        throw new UnsupportedOperationException("Not implemented");
+    public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Long id){
+         orderService.deleteOrderByid(id);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(null, "Order deleted successfully"));
+        //throw new UnsupportedOperationException("Not implemented");
     }
 
     @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable Long id){
-        throw new UnsupportedOperationException("Not implemented");
+    public ResponseEntity<ApiResponse<GetOrderResponseDto>> getOrderById(@PathVariable Long id){
+        GetOrderResponseDto order = orderService.getOrderById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(order, "Order fetched successfully"));
     }
 
     @GetMapping("/user/{userId}")

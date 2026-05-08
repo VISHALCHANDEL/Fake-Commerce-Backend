@@ -1,4 +1,4 @@
-package com.example.FakeCommerce.exceptions;
+ package com.example.FakeCommerce.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +20,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoCategoriesFoundException.class)
     public ResponseEntity<String> handleNoCategoriesFoundException(NoCategoriesFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NoProductsFoundException.class)
+    public ResponseEntity<String> handleNoProductsFoundException(NoProductsFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }
