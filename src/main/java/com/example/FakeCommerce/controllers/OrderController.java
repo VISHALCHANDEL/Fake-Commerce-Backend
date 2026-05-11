@@ -40,7 +40,7 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Long id){
-         orderService.deleteOrderByid(id);
+         orderService.deleteOrder(id);
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(null, "Order deleted successfully"));
         //throw new UnsupportedOperationException("Not implemented");
     }
