@@ -1,12 +1,17 @@
 package com.example.FakeCommerce.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.example.FakeCommerce.adapters.OrderAdapter;
 import com.example.FakeCommerce.dtos.CreateOrderRequestDTO;
 import com.example.FakeCommerce.dtos.GetOrderResponseDto;
+import com.example.FakeCommerce.dtos.UpdateOrderRequestDto;
 import com.example.FakeCommerce.exceptions.ResourceNotFoundException;
 import com.example.FakeCommerce.repositories.OrderRepository;
 import com.example.FakeCommerce.repositories.ProductRepository;
@@ -16,14 +21,16 @@ import com.example.FakeCommerce.schema.OrderStatus;
 import com.example.FakeCommerce.schema.Product;
 
 import aQute.bnd.annotation.headers.RequireCapability;
+import jakarta.transaction.Transactional;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import com.example.FakeCommerce.repositories.OrderproductsRepository;
 import com.example.FakeCommerce.repositories.OrderproductsRepository;
-
+import java.util.*;
 @Service
 @RequiredArgsConstructor
-
+@NoArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
     
@@ -49,6 +56,7 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
+    @Transactional
     public void createOrder(CreateOrderRequestDTO createOrderRequestDTO){
         Order order = Order.builder()
                      .status(OrderStatus.PENDING)
@@ -56,19 +64,18 @@ public class OrderService {
         orderRepository.save(order);
 
         if(createOrderRequestDTO.getOrderItems() != null){
-            for(var itemDto : createOrderRequestDTO.getOrderItems()){
-                Product product = productRepository.findById(itemDto.getProductId())
-                .orElseThrow(()-> new ResourceNotFoundException("Product not found with id:" + itemDto.getProductId()));
+        //    List<Long>productIds = new ArrayList<>();
+        //   // Method 1
+        //    for(var itemDto: createOrderRequestDTO.getOrderItems()){
+        //     productIds.add(itemDto.getProductId());
+        //    }
+        //    // Method 2
+            List<Long>productIds = createOrderRequestDTO.getOrderItems().stream()
+                                   .map(item -> item.getProductId()).toList();
+            
+            List<Product>products = productRepository.findAllById(productIds);
 
-                OrderProducts orderProduct = OrderProducts.builder()
-                                             .order(order)
-                                             .product(product)
-                                             .quantity(itemDto.getQuantity() != null ? itemDto.getQuantity():1)
-                                             .build();
-
-                orderproductsRepository.save(orderProduct);
-
-            }
+            Map<Long,Product>productMap = products.stream().collect(Collectors.toMap(Product::getId, Function.identity()));
         }
 
         
@@ -77,6 +84,21 @@ public class OrderService {
         //2. i the payload (dto) has some order products, add those in the order as well
         // other wise skip it
         
+        public GetOrderResponseDto updateOrder(Long id, UpdateOrderRequestDto updateOrderRequestDto){
+            Order order = orderRepository.findById((id)).
+            orElseThrow(()-> new ResourceNotFoundException("Order not found with id:" + id));
+
+            if(updateOrderRequestDto.getStatus() != null){
+                order.setStatus(updateOrderRequestDto.getStatus());
+                orderRepository.save(order);
+            }
+            if(updateOrderRequestDto.getOrderItems()!= null){
+                for(var itemDto: updateOrderRequestDto.getOrderItems()){
+                    // process each item ------> N+1 problem
+                }
+            }
+            return orderAdapter.mapToGetOrderResponseDto(order);
+        }
 
     }
 
