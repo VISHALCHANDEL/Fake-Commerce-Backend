@@ -31,7 +31,6 @@ import com.example.FakeCommerce.repositories.OrderproductsRepository;
 import java.util.*;
 @Service
 @RequiredArgsConstructor
-@NoArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
     

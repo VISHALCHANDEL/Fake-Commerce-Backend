@@ -1,18 +1,23 @@
 spring:
- application:
-  name: FakeCommerce
- datasource:
-  url: jdbc:mysql://localhost:3306/fakecommerce
-  username: root
-  password: chandel0987
-  driver-class-name: com.mysql.cj.jdbc.Driver
- jpa:
-  show-sql: true
-  hibernate:
-   ddl-auto: validate
- flyway:
-  enabled: true
-  locations: classpath:db/migration
+  application:
+    name: FakeCommerce
+  datasource:
+    url: jdbc:mysql://localhost:3306/fakecommerce
+    username: root
+    password: chandel0987
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
 
    

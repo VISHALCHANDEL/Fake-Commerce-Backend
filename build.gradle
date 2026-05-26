@@ -39,8 +39,15 @@ dependencies {
 	implementation 'org.flywaydb:flyway-core:11.5.0'
 	implementation 'org.flywaydb:flyway-mysql:11.5.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'com.newrelic.agent.java:newrelic-java:latest.release'
+	
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+bootRun {
+	jvmArgs = ["-javaagent:newrelic/newrelic.jar"]
 }
