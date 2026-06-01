@@ -9,9 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.example.FakeCommerce.dtos.CreateOrderRequestDTO;
 import com.example.FakeCommerce.dtos.GetOrderResponseDto;
+import com.example.FakeCommerce.dtos.GetOrderSummaryResponseDto;
+import com.example.FakeCommerce.dtos.UpdateOrderRequestDto;
 import com.example.FakeCommerce.schema.Order;
 import com.example.FakeCommerce.services.OrderService;
 import com.example.FakeCommerce.utils.ApiResponse;
@@ -19,7 +24,7 @@ import com.example.FakeCommerce.utils.ApiResponse;
 import aQute.bnd.annotation.headers.RequireCapability;
 import lombok.RequiredArgsConstructor;
 
-
+@RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
 
@@ -27,15 +32,17 @@ public class OrderController {
     private final OrderService orderService;
     @GetMapping
     public ResponseEntity<ApiResponse<List<GetOrderResponseDto>>>getAllOrders(){
-       
+        System.out.println("Api hitted successfully");
        List<GetOrderResponseDto> orders = orderService.getAllOrders();
        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(orders, "Orders fetched successfully"));
        // throw new UnsupportedOperationException("Not implemented");
     }
     
     @PostMapping
-    public Order createOrder(){
-        throw new UnsupportedOperationException("Not implemented");
+    public ResponseEntity<ApiResponse<GetOrderResponseDto>> createOrder(@RequestBody CreateOrderRequestDTO createOrderRequestDTO){
+        System.out.println("Api hitted successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(orderService.createOrder(createOrderRequestDTO),
+    "Order Created Successfully"));
     }
 
     @DeleteMapping("/{id}")
@@ -57,13 +64,24 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public Order updateOrder(@PathVariable Long id){
-        throw new UnsupportedOperationException("Not implemented");
+    public ResponseEntity<ApiResponse<GetOrderResponseDto>> updateOrder(@PathVariable Long id, @RequestBody UpdateOrderRequestDto updateOrderRequestDto){
+        //new UnsupportedOperationException("Not implemented");
+        System.out.println("Api hitted Succesfuly");
+        return ResponseEntity.status(HttpStatus.OK)
+               .body(
+                ApiResponse.success(orderService.updateOrder(id, updateOrderRequestDto),
+            "Order updated successfully")
+               );
     }
 
-    @GetMapping("/{id}")
-    public void getOrderSummary(@PathVariable Long id){
-                throw new UnsupportedOperationException("Not implemented");
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<ApiResponse<GetOrderSummaryResponseDto>> getOrderSummary(@PathVariable Long id){
+            return ResponseEntity
+                   .status(HttpStatus.OK)
+                   .body(
+                    ApiResponse.success(orderService.getOrderSummary(id),
+                    "Order summary fetched successfully"
+                   ));
 
     }
 }
