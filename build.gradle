@@ -40,7 +40,10 @@ dependencies {
 	implementation 'org.flywaydb:flyway-mysql:11.5.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'com.newrelic.agent.java:newrelic-java:latest.release'
+	// redis integrations
 	
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis:4.1.0'
+	implementation 'redis.clients:jedis:7.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
